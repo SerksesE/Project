@@ -81,7 +81,7 @@
     <div class="container">
         <h1>TodoList</h1>
 
-        <form>
+        <form onsubmit="submitTodo(); return false">
             <input type="text" id="new-todo" placeholder="What needs to be done?">
         </form>
 
@@ -90,23 +90,34 @@
                 <input id="todo-1" type="checkbox" onchange="toggleDone.bind(this)();">
                 <label for="todo-1">Sweep the floor</label>
             </li>
-            <li class="todo completed">
-                <input id="todo-2" type="checkbox" checked="checked" onchange="toggleDone.bind(this)();">
+            <li class="todo">
+                <input id="todo-2" type="checkbox" onchange="toggleDone.bind(this)();">
                 <label for="todo-2">Dust the vases</label>
             </li>
         </ul>
         <div class="footer">
-            Todo: <span id="todo-count">1</span> •
-            Done: <span id="completed-count">0</span> •
-            Total: <span id="total-count">1</span>
+            Todo: <span id="todo-count"></span> •
+            Done: <span id="completed-count"></span> •
+            Total: <span id="total-count"></span>
+            <a href="#" onclick="cleanUpDoneTodos(); return false">Clean up</a>
         </div>
     </div>
 
     <script>
         function updateCounters() {
+            // Total number of todos
+            var totalCount = document.getElementById('total-count');
+            var totalTodos = document.getElementsByClassName("todo").length;
+            totalCount.innerHTML = totalTodos;
+        }
+
+        updateCounters();
+
+        function updateCounters() {
             //Total numbers of todo's
             let totalCount = document.getElementById('total-count');
             let totalTodos = document.getElementsByClassName("todo").length;
+
             totalCount.innerHTML = totalTodos;
             //Total number of completed todo's
             let completedCount = document.getElementById('completed-count');
@@ -115,7 +126,8 @@
             //Total number of uncompleted todos
             let uncompletedCount = document.getElementById('todo-count');
             let uncompletedTodos = totalTodos - completedTodos;
-            todoCount.innerHTML = uncompletedTodos;
+            uncompletedCount.innerHTML = uncompletedTodos;
+
         }
 
         function toggleDone() {
@@ -131,6 +143,63 @@
             updateCounters();
         }
 
+        function submitTodo() {
+            let inputField = document.getElementById("new-todo");
+            let newTodoTitle = inputField.value;
+            createTodo(newTodoTitle);
+            inputField.value = null;
+
+            updateCounters();
+
+            function createTodo(title) {
+                // create a list item
+                let listItem = document.createElement("li");
+                listItem.className = "todo";
+
+                // create a checkbox and add it to the list item
+                let checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.id = "todo-" + nextTodoId();
+                checkbox.checked = false;
+                // assign the toggleDone function on the checkbox's onchange event
+                checkbox.onchange = toggleDone.bind(checkbox);
+                listItem.appendChild(checkbox);
+
+                // create some whitespace to put between the checkbox and the label
+                let space = document.createTextNode(" ");
+                listItem.appendChild(space);
+
+                // create a label that holds the title and add it to the list item
+                let label = document.createElement("label");
+                label.htmlFor = checkbox.id;
+                label.innerHTML = title;
+                listItem.appendChild(label);
+
+                // add the list item with the checkbox, the whitespace and the label to
+                // the list
+                let list = document.getElementById("todolist");
+                list.appendChild(listItem);
+            }
+
+            // Every todo has it's own id so we can add that to the corresponding label's
+            // "for" attribute to make sure that when we click the label, the checkbox
+            // toggles
+            function nextTodoId() {
+                return document.getElementsByClassName("todo").length + 1;
+            }
+        }
+
+        function cleanUpDoneTodos() {
+            var list = document.getElementById("todolist");
+            var doneItems = document.getElementsByClassName("completed");
+
+            // Reverse loop through the done todo items so we can remove them without changing the index of the remaining items when we remove them
+            for (let i = doneItems.length; i > 0; i--) {
+                list.removeChild(doneItems[i - 1]);
+            }
+
+            updateCounters();
+        }
 
     </script>
 
