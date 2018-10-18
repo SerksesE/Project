@@ -103,12 +103,22 @@
     </div>
 
     <script>
+        function updateCounters() {
+            //Total numbers of todo's
+            let totalCount = document.getElementById('total-count');
+            let totalTodos = document.getElementsByClassName("todo").length;
+            totalCount.innerHTML = totalTodos;
+            //Total number of completed todo's
+            let completedCount = document.getElementById('completed-count');
+            let completedTodos = document.getElementsByClassName('completed').length;
+            completedCount.innerHTML = completedTodos;
+            //Total number of uncompleted todos
+            let uncompletedCount = document.getElementById('todo-count');
+            let uncompletedTodos = totalTodos - completedTodos;
+            todoCount.innerHTML = uncompletedTodos;
+        }
 
-        let totalCount = document.getElementById('total-count');
-
-        let totalTodos = document.getElementsByClassName("todo").length;
-
-        totalCount.innerHTML = totalTodos;
+        updateCounters();
     </script>
 
 </body>
